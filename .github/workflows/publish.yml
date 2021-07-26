@@ -1,0 +1,40 @@
+name: Publish Release
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: yarn install
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Add tag
+      run: |
+        CURRENT_VERSION=`cat package.json | grep "\"version\"" | sed "s/\s*\"version\"\s*:\s*\"\([0-9.]*\)\",/\1/g"`
+
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a v$CURRENT_VERSION -m "Version $CURRENT_VERSION deployed by Github Actions"
+    - name: Push tag
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        tags: true
+
