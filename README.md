@@ -1,6 +1,6 @@
 # Yoti Face Capture for React Native
 An easy to use face detection component for React Native from Yoti.
-Face detection is performed with the front facing camera, whose frames the library analyzes and then produces an optimised cropped image of the captured face.
+Face detection is performed with the front-facing camera. The captured frames get analyzed by the library. The result is an optimised cropped image of the captured face.
 
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/getyoti/react-native-yoti-face-capture?label=latest%20release)](https://github.com/getyoti/react-native-yoti-face-capture/releases) [![Publish Release](https://github.com/getyoti/react-native-yoti-face-capture/workflows/Publish%20Release/badge.svg)](https://github.com/getyoti/react-native-yoti-face-capture/actions?query=workflow%3A%22Publish+Release%22)
 <br>
