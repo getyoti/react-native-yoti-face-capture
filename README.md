@@ -7,7 +7,7 @@ Face detection is performed with the front facing camera, whose frames the libra
 [![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)](https://www.android.com)
 [![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)](https://developer.apple.com/ios)
 
-The library leverages [Google ML Kit](https://firebase.google.com/docs/ml-kit/detect-faces) for the face detection.
+The library leverages [Google ML Kit](https://firebase.google.com/docs/ml-kit/detect-faces) for face detection on Android, while the iOS implementation uses Apple’s [Vision library](https://developer.apple.com/documentation/vision).
 
 ## Installation
 
