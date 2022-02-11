@@ -12,7 +12,7 @@ The library leverages [Google ML Kit](https://firebase.google.com/docs/ml-kit/de
 ## Installation
 
 ```sh
-yarn add react-native-yoti-face-capture
+yarn add @getyoti/react-native-yoti-face-capture
 ```
 
 Navigate to your iOS folder and install pods with:
