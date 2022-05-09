@@ -72,6 +72,7 @@ export default function App() {
         requireEyesOpen={false}
         requiredStableFrames={1}
         requireValidAngle={false}
+        requireBrightEnvironment
         scanningArea={[0, 0, nativeWindowWidth, nativeWindowHeight]}
         onFaceCaptureAnalyzedImage={(result) => {
           const { croppedImage } = result;
