@@ -283,3 +283,7 @@ protected List<ReactPackage> getPackages() {
 ## License
 
 MIT
+
+## Support
+If you have any other questions please do not hesitate to contact clientsupport@yoti.com.
+Once we have answered your question we may contact you again to discuss Yoti products and services. If you'd prefer us not to do this, please let us know when you e-mail.
