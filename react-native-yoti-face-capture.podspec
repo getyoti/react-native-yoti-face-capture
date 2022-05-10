@@ -11,10 +11,10 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
   s.homepage     = 'https://github.com/getyoti/react-native-yoti-face-capture'
   s.source       = { :git => "https://github.com/getyoti/react-native-yoti-face-capture.git", :tag => "#{s.version}" }
-  s.platforms    = { :ios => "12.0" }
+  s.platforms    = { :ios => "13.0" }
 
   s.source_files = "ios/**/*.{h,m,mm}"
 
   s.dependency "React-Core"
-  s.dependency "YotiFaceCapture", "3.0.0"
+  s.dependency "YotiFaceCapture", "4.1.0"
 end
