@@ -2,7 +2,6 @@ import * as React from 'react';
 import AutoHeightImage from 'react-native-auto-height-image';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import {
-  PixelRatio,
   Platform,
   StyleSheet,
   View,
@@ -23,13 +22,6 @@ export default function App() {
   const [cameraIsRunning, setCameraIsRunning] = React.useState(false);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [latestState, setLatestState] = React.useState('');
-  const [nativeWindowHeight, setNativeWindowHeight] = React.useState(0);
-  const [nativeWindowWidth, setNativeWindowWidth] = React.useState(0);
-
-  React.useEffect(() => {
-    setNativeWindowHeight(PixelRatio.getPixelSizeForLayoutSize(windowHeight));
-    setNativeWindowWidth(PixelRatio.getPixelSizeForLayoutSize(windowWidth));
-  }, [windowHeight, windowWidth]);
 
   React.useEffect(() => {
     let permission;
@@ -73,7 +65,7 @@ export default function App() {
         requiredStableFrames={1}
         requireValidAngle={false}
         requireBrightEnvironment
-        scanningArea={[0, 0, nativeWindowWidth, nativeWindowHeight]}
+        scanningArea={[0, 0, windowWidth, windowHeight]}
         onFaceCaptureAnalyzedImage={(result) => {
           const { croppedImage } = result;
           const uri = `data:image/jpg;base64,${croppedImage}`;
@@ -81,10 +73,6 @@ export default function App() {
             setBase64(uri);
           }
           setLatestState('Valid Face');
-          console.log({
-            result,
-            uri,
-          });
         }}
         onFaceCaptureImageAnalysisFailed={({ cause }) => {
           setLatestState(`Failed - ${cause}`);
@@ -164,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   log: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontWeight: 'bold',
   },
   previewContainer: {
