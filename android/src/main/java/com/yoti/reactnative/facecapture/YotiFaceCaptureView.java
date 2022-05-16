@@ -32,6 +32,7 @@ public class YotiFaceCaptureView extends LinearLayout {
   private ImageQuality mImageQuality;
   private boolean mRequireValidAngle;
   private boolean mRequireEyesOpen;
+  private boolean mRequireBrightEnvironment = true;
   private int mRequiredStableFrames;
   private ReadableArray mScanningArea;
   private final CameraStateListener mCameraStateListener = new CameraStateListener() {
@@ -152,6 +153,10 @@ public class YotiFaceCaptureView extends LinearLayout {
     mRequiredStableFrames = requiredStableFrames;
   }
 
+  public void setRequireBrightEnvironment(Boolean requireBrightEnvironment) {
+    mRequireBrightEnvironment = requireBrightEnvironment;
+  }
+
   public void startCamera() {
     mFaceCapture.startCamera((LifecycleOwner) this.context.getCurrentActivity(), mCameraStateListener);
   }
@@ -173,6 +178,7 @@ public class YotiFaceCaptureView extends LinearLayout {
       mImageQuality,
       mRequireValidAngle,
       mRequireEyesOpen,
+      mRequireBrightEnvironment,
       mRequiredStableFrames
     );
     mFaceCapture.startAnalysing(configuration, mFaceCaptureListener);

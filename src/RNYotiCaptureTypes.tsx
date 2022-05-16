@@ -70,6 +70,7 @@ export type ANALYSIS_FAILURE_CAUSE =
   | 'FaceCaptureAnalysisErrorNoFaceDetected'
   | 'FaceCaptureAnalysisErrorFaceNotCentered'
   | 'FaceCaptureAnalysisErrorFaceNotStraight'
+  | 'FaceCaptureAnalysisErrorEnvironmentTooDark'
   | 'FaceCaptureAnalysisErrorFaceAnalysisFailed'
   | 'FaceCaptureAnalysisErrorMultipleFaces';
 
@@ -92,6 +93,7 @@ export type ComponentProps = {
   requireEyesOpen?: boolean;
   requireValidAngle?: boolean;
   requiredStableFrames?: number;
+  requireBrightEnvironment?: boolean;
   imageQuality?: IMAGE_QUALITY;
   scanningArea?: Array<number>;
   onFaceCaptureAnalyzedImage: (faceCaptureResult: FaceCaptureResult) => void;
