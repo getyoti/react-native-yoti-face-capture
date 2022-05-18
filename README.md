@@ -106,6 +106,7 @@ function App(){
             requireEyesOpen={false}
             requiredStableFrames={3}
             requireValidAngle
+            requireBrightEnvironment
             scanningArea={[
                 0,
                 0,
@@ -140,6 +141,7 @@ function App(){
 * [requireEyesOpen](#requireEyesOpen)
 * [requiredStableFrames](#requiredStableFrame)
 * [requireValidAngle](#requireValidAngle)
+* [requireBrightEnvironment](#requireBrightEnvironment)
 * [scanningArea](#scanningArea)
 * [onFaceCaptureStateChanged](#onFaceCaptureStateChanged)
 * [onFaceCaptureStateFailed](#onFaceCaptureStateFailed)
@@ -171,6 +173,12 @@ The optional prop defaults to `3`.
 This optional boolean, if true, will require the picture to be taken with a tilt angle no bigger than 30 degrees. When this requirement is not met, error `FaceCaptureAnalysisErrorFaceNotStraight` is returned.
 * **true (default)** - require face to be straight
 * **false** -  allow face to not be straight
+
+#### requireBrightEnvironment
+This optional boolean, if true, will require the picture to be taken in a bright environment. When this requirement is not met, error `FaceCaptureAnalysisErrorEnvironmentTooDark` is returned.
+* **true (default)** - require bright environment, picture is not taken til the luminosity is good enough 
+* **false** -  allow the picture to be taken regardless of luminosity 
+
 
 #### scanningArea
 The scanning area is a Rect representing the region in which the face can only be detected. If the face is outside of this region it, will not be considered a valid face.
@@ -217,6 +225,7 @@ A single string value parameter will be supplied to the callback. The value will
 - `FaceCaptureAnalysisErrorFaceNotStraight` (depending on configuration) 
 - `FaceCaptureAnalysisErrorFaceAnalysisFailed`
 - `FaceCaptureAnalysisErrorMultipleFaces`
+- `FaceCaptureAnalysisErrorEnvironmentTooDark` (depending on configuration)
 
 # Troubleshooting
 
@@ -283,3 +292,7 @@ protected List<ReactPackage> getPackages() {
 ## License
 
 MIT
+
+## Support
+If you have any other questions please do not hesitate to contact clientsupport@yoti.com.
+Once we have answered your question we may contact you again to discuss Yoti products and services. If you'd prefer us not to do this, please let us know when you e-mail.

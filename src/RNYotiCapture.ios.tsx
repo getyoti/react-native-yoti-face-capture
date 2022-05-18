@@ -45,6 +45,7 @@ interface NativeFaceCaptureViewIOS {
   requireEyesOpen: boolean;
   requireValidAngle: boolean;
   requiredStableFrames: number;
+  requireBrightEnvironment: boolean;
   scanningArea: Array<number>;
   onFaceCaptureAnalyzedImage: (
     faceCaptureResult: NativeFaceCaptureResult
@@ -118,6 +119,7 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
       requireEyesOpen = false,
       requireValidAngle = false,
       requiredStableFrames = 3,
+      requireBrightEnvironment = true,
       imageQuality = IMAGE_QUALITY_MEDIUM,
       scanningArea = [
         0,
@@ -132,6 +134,7 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
         requireEyesOpen={requireEyesOpen}
         requireValidAngle={requireValidAngle}
         requiredStableFrames={requiredStableFrames}
+        requireBrightEnvironment={requireBrightEnvironment}
         imageQuality={imageQuality}
         scanningArea={scanningArea}
         onFaceCaptureAnalyzedImage={({

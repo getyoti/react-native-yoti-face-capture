@@ -72,4 +72,9 @@ public class YotiFaceCaptureViewManager extends SimpleViewManager<YotiFaceCaptur
   public void setRequiredStableFrames(YotiFaceCaptureView view, int requireStableFrames) {
     view.setRequiredStableFrames(requireStableFrames);
   }
+
+  @ReactProp(name = "requireBrightEnvironment", defaultBoolean = true)
+  public void setRequireBrightEnvironment(YotiFaceCaptureView view, boolean requireBrightEnvironment) {
+    view.setRequireBrightEnvironment(requireBrightEnvironment);
+  }
 }

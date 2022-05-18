@@ -28,6 +28,7 @@ type NATIVE_ANALYSIS_FAILURE_CAUSE =
   | 'NoFaceDetected'
   | 'FaceNotCentered'
   | 'FaceNotStraight'
+  | 'EnvironmentTooDark'
   | 'AnalysisError'
   | 'MultipleFacesDetected';
 
@@ -77,6 +78,7 @@ interface NativeFaceCaptureViewAndroid {
   requireEyesOpen: boolean;
   requireValidAngle: boolean;
   requiredStableFrames: number;
+  requireBrightEnvironment: Boolean;
   imageQuality: IMAGE_QUALITY;
   scanningArea: Array<number>;
   onCameraStateChange: (
@@ -97,6 +99,7 @@ const FACE_CAPTURE_FAILURE_RENAMING: FailureRenaming = {
   NoFaceDetected: 'FaceCaptureAnalysisErrorNoFaceDetected',
   FaceNotCentered: 'FaceCaptureAnalysisErrorFaceNotCentered',
   FaceNotStraight: 'FaceCaptureAnalysisErrorFaceNotStraight',
+  EnvironmentTooDark: 'FaceCaptureAnalysisErrorEnvironmentTooDark',
   AnalysisError: 'FaceCaptureAnalysisErrorFaceAnalysisFailed',
   MultipleFacesDetected: 'FaceCaptureAnalysisErrorMultipleFaces',
 };
@@ -208,6 +211,7 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
   render() {
     const {
       requireEyesOpen = false,
+      requireBrightEnvironment = true,
       requireValidAngle = false,
       requiredStableFrames = 3,
       imageQuality = IMAGE_QUALITY_MEDIUM,
@@ -225,6 +229,7 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
         requireEyesOpen={requireEyesOpen}
         requireValidAngle={requireValidAngle}
         requiredStableFrames={requiredStableFrames}
+        requireBrightEnvironment={requireBrightEnvironment}
         imageQuality={imageQuality}
         scanningArea={scanningArea}
         ref={this._setReference}

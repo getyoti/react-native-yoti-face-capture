@@ -53,6 +53,14 @@
     [self.faceCaptureConfiguration disableFaceNotStraightValidationOption];
 }
 
+-(void)setRequireBrightEnvironment:(BOOL *)requireBrightEnvironment {
+    if (requireBrightEnvironment) {
+        [self.faceCaptureConfiguration enableEnvironmentLuminosityValidationOption];
+        return;
+    }
+    [self.faceCaptureConfiguration disableEnvironmentLuminosityValidationOption];
+}
+
 -(void)setScanningArea:(NSArray *)scanningArea {
     CGRect area = CGRectMake(
         [(NSNumber *)[scanningArea objectAtIndex:0] floatValue],
@@ -162,7 +170,11 @@
                 @"originalImage": originalImageBase64,
                 @"cause": @"FaceCaptureAnalysisErrorMultipleFaces" });
             break;
-
+        case FaceCaptureAnalysisErrorEnvironmentTooDark:
+             self.onFaceCaptureImageAnalysisFailed(@{
+                @"originalImage": originalImageBase64,
+                @"cause": @"FaceCaptureAnalysisErrorEnvironmentTooDark" });
+            break;  
         default:
             self.onFaceCaptureImageAnalysisFailed(@{
                 @"originalImage": originalImageBase64,
