@@ -1,4 +1,6 @@
 # ChangeLog
+## Version 2.0.1
+
 ## Version 2.0.0
 
 BREAKING CHANGE: Low light detection
@@ -8,7 +10,7 @@ Please, check [README.md](https://github.com/getyoti/react-native-yoti-face-capt
 
 ## Version 1.1.0
 
-Fix: README.md 
+Fix: README.md
 
 ## Version 1.0.0
 
