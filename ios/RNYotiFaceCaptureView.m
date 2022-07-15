@@ -6,7 +6,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    self.rootViewController = RCTPresentedViewController();
+    self.rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     self.faceCaptureViewController = [FaceCapture faceCaptureViewController];
     self.faceCaptureViewController.delegate = self;
     self.faceCaptureViewController.view.backgroundColor = [UIColor clearColor];
