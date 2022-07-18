@@ -6,7 +6,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    self.rootViewController = RCTPresentedViewController();
+    self.rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     self.faceCaptureViewController = [FaceCapture faceCaptureViewController];
     self.faceCaptureViewController.delegate = self;
     self.faceCaptureViewController.view.backgroundColor = [UIColor clearColor];
@@ -65,8 +65,8 @@
     CGRect area = CGRectMake(
         [(NSNumber *)[scanningArea objectAtIndex:0] floatValue],
         [(NSNumber *)[scanningArea objectAtIndex:1] floatValue],
-        [(NSNumber *)[scanningArea objectAtIndex:2] floatValue],
-        [(NSNumber *)[scanningArea objectAtIndex:3] floatValue]
+        [(NSNumber *)[scanningArea objectAtIndex:2] floatValue] / [UIScreen mainScreen].scale,
+        [(NSNumber *)[scanningArea objectAtIndex:3] floatValue] / [UIScreen mainScreen].scale
     );
     [self.faceCaptureConfiguration setScanningArea:area];
 }

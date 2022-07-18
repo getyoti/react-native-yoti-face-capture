@@ -3,6 +3,7 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import {
   Platform,
+  PixelRatio,
   StyleSheet,
   View,
   TouchableOpacity,
@@ -22,6 +23,14 @@ export default function App() {
   const [cameraIsRunning, setCameraIsRunning] = React.useState(false);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [latestState, setLatestState] = React.useState('');
+  const [nativeWindowHeight, setNativeWindowHeight] = React.useState(0);
+  const [nativeWindowWidth, setNativeWindowWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    setNativeWindowHeight(PixelRatio.getPixelSizeForLayoutSize(windowHeight));
+    setNativeWindowWidth(PixelRatio.getPixelSizeForLayoutSize(windowWidth));
+  }, [windowHeight, windowWidth]);
+
 
   React.useEffect(() => {
     let permission;
@@ -65,7 +74,7 @@ export default function App() {
         requiredStableFrames={1}
         requireValidAngle={false}
         requireBrightEnvironment
-        scanningArea={[0, 0, windowWidth, windowHeight]}
+        scanningArea={[0, 0, nativeWindowWidth, nativeWindowHeight]}
         onFaceCaptureAnalyzedImage={(result) => {
           const { croppedImage } = result;
           const uri = `data:image/jpg;base64,${croppedImage}`;
