@@ -1,4 +1,12 @@
 # ChangeLog
+## Version 3.0.0
+BREAKING CHANGE: New configuration requirements
+
+The configuration has been updated and expects a `faceCenter` representing the expected center of the captured face.
+This parameter is a percentage value (x, y). E.g.: (0,0) - top left; (0.5, 0.5) - center of the screen; (1,1) - bottom right; 
+
+Please, check [README.md](https://github.com/getyoti/react-native-yoti-face-capture/blob/main/README.md) for more details.
+
 ## Version 2.0.1
 
 Contains a couple of bug fixes on the iOS side of the SDK:
