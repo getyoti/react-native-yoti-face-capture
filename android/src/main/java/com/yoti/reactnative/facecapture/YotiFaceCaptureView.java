@@ -1,10 +1,10 @@
 package com.yoti.reactnative.facecapture;
 
+import android.graphics.PointF;
 import android.util.Base64;
 import android.view.Choreographer;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.graphics.Rect;
 
 import androidx.lifecycle.LifecycleOwner;
 
@@ -34,7 +34,7 @@ public class YotiFaceCaptureView extends LinearLayout {
   private boolean mRequireEyesOpen;
   private boolean mRequireBrightEnvironment = true;
   private int mRequiredStableFrames;
-  private ReadableArray mScanningArea;
+  private ReadableArray mFaceCenter;
   private final CameraStateListener mCameraStateListener = new CameraStateListener() {
     @Override
     public void onCameraState(@NotNull CameraState cameraState) {
@@ -121,8 +121,8 @@ public class YotiFaceCaptureView extends LinearLayout {
     super.requestLayout();
   }
 
-  public void setScanningArea(ReadableArray scanningArea) throws Exception {
-    mScanningArea = scanningArea;
+  public void setFaceCenter(ReadableArray faceCenter) throws Exception {
+    mFaceCenter = faceCenter;
   }
 
   public void setImageQuality(String imageQuality) throws Exception {
@@ -166,15 +166,10 @@ public class YotiFaceCaptureView extends LinearLayout {
   }
 
   public void startAnalyzing() {
-    Rect scanningArea = new Rect(
-      mScanningArea.getInt(0),
-      mScanningArea.getInt(1),
-      mScanningArea.getInt(0) + mScanningArea.getInt(2),
-      mScanningArea.getInt(1) + mScanningArea.getInt(3)
-    );
+    PointF faceCenter = new PointF((float) mFaceCenter.getDouble(0), (float) mFaceCenter.getDouble(1));
 
     FaceCaptureConfiguration configuration = new FaceCaptureConfiguration(
-      scanningArea,
+      faceCenter,
       mImageQuality,
       mRequireValidAngle,
       mRequireEyesOpen,

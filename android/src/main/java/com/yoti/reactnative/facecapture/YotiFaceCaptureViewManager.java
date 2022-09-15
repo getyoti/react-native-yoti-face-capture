@@ -40,10 +40,10 @@ public class YotiFaceCaptureViewManager extends SimpleViewManager<YotiFaceCaptur
       .build();
   }
 
-  @ReactProp(name = "scanningArea")
-  public void setScanningArea(YotiFaceCaptureView view, ReadableArray scanningArea) throws Exception {
+  @ReactProp(name = "faceCenter")
+  public void setFaceCenter(YotiFaceCaptureView view, ReadableArray faceCenter) throws Exception {
     try {
-      view.setScanningArea(scanningArea);
+      view.setFaceCenter(faceCenter);
     } catch (Exception e) {
       throw e;
     }
