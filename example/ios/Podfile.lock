@@ -187,9 +187,9 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-yoti-face-capture (2.0.1):
+  - react-native-yoti-face-capture (3.0.0):
     - React-Core
-    - YotiFaceCapture (= 4.1.0)
+    - YotiFaceCapture (= 5.0.0)
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
   - React-RCTAnimation (0.63.4):
@@ -253,7 +253,7 @@ PODS:
   - RNPermissions (3.0.5):
     - React-Core
   - Yoga (1.14.0)
-  - YotiFaceCapture (4.1.0)
+  - YotiFaceCapture (5.0.0)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -371,7 +371,7 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-yoti-face-capture: 0e0f3908819c07f069a62467f9ef06e23e60dfb7
+  react-native-yoti-face-capture: 319c176408ec71dc69ca02daaf0e30477ac4933e
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -384,7 +384,7 @@ SPEC CHECKSUMS:
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   RNPermissions: 7043bacbf928eae25808275cfe73799b8f618911
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
-  YotiFaceCapture: 2a99bd92ebacf2fa4e001495b8309fa683284035
+  YotiFaceCapture: 7862e56682f6135c2aa51c011a6f5fa017f19ae4
 
 PODFILE CHECKSUM: b091e095c67d4998668b985d97849f6ed96dde75
 
