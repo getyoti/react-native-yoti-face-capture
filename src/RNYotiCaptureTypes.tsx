@@ -95,7 +95,7 @@ export type ComponentProps = {
   requiredStableFrames?: number;
   requireBrightEnvironment?: boolean;
   imageQuality?: IMAGE_QUALITY;
-  scanningArea?: Array<number>;
+  faceCenter?: Array<number>;
   onFaceCaptureAnalyzedImage: (faceCaptureResult: FaceCaptureResult) => void;
   onFaceCaptureImageAnalysisFailed: (
     faceCaptureAnalysisFailure: FaceCaptureAnalysisFailure

@@ -3,7 +3,6 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import {
   Platform,
-  PixelRatio,
   StyleSheet,
   View,
   TouchableOpacity,
@@ -15,21 +14,12 @@ import YotiFaceCapture, {
 } from '@getyoti/react-native-yoti-face-capture';
 
 export default function App() {
-  const windowHeight = useWindowDimensions().height;
-  const windowWidth = useWindowDimensions().width;
   const YotiFaceCaptureRef = React.useRef(null);
 
   const [base64, setBase64] = React.useState(false);
   const [cameraIsRunning, setCameraIsRunning] = React.useState(false);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [latestState, setLatestState] = React.useState('');
-  const [nativeWindowHeight, setNativeWindowHeight] = React.useState(0);
-  const [nativeWindowWidth, setNativeWindowWidth] = React.useState(0);
-
-  React.useEffect(() => {
-    setNativeWindowHeight(PixelRatio.getPixelSizeForLayoutSize(windowHeight));
-    setNativeWindowWidth(PixelRatio.getPixelSizeForLayoutSize(windowWidth));
-  }, [windowHeight, windowWidth]);
 
 
   React.useEffect(() => {
@@ -74,7 +64,7 @@ export default function App() {
         requiredStableFrames={1}
         requireValidAngle={false}
         requireBrightEnvironment
-        scanningArea={[0, 0, nativeWindowWidth, nativeWindowHeight]}
+        faceCenter={[0.5, 0.5]}
         onFaceCaptureAnalyzedImage={(result) => {
           const { croppedImage } = result;
           const uri = `data:image/jpg;base64,${croppedImage}`;
