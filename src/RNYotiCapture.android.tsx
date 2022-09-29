@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   findNodeHandle,
-  PixelRatio,
   requireNativeComponent,
   NativeModules,
 } from 'react-native';
@@ -80,7 +79,7 @@ interface NativeFaceCaptureViewAndroid {
   requiredStableFrames: number;
   requireBrightEnvironment: Boolean;
   imageQuality: IMAGE_QUALITY;
-  scanningArea: Array<number>;
+  faceCenter: Array<number>;
   onCameraStateChange: (
     faceCaptureState: NativeFaceCaptureState | NativeFaceCaptureStateFailure
   ) => void;
@@ -215,11 +214,9 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
       requireValidAngle = false,
       requiredStableFrames = 3,
       imageQuality = IMAGE_QUALITY_MEDIUM,
-      scanningArea = [
-        0,
-        0,
-        PixelRatio.getPixelSizeForLayoutSize(720),
-        PixelRatio.getPixelSizeForLayoutSize(1280),
+      faceCenter = [
+        0.5,
+        0.5
       ],
     } = this.props;
 
@@ -231,7 +228,7 @@ export default class RNYotiCapture extends React.Component<ComponentProps> {
         requiredStableFrames={requiredStableFrames}
         requireBrightEnvironment={requireBrightEnvironment}
         imageQuality={imageQuality}
-        scanningArea={scanningArea}
+        faceCenter={faceCenter}
         ref={this._setReference}
         onCameraStateChange={this.onCameraStateChange.bind(this)}
         onFaceCaptureResult={this.onFaceCaptureResult.bind(this)}

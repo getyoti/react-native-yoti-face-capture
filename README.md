@@ -107,11 +107,9 @@ function App(){
             requiredStableFrames={3}
             requireValidAngle
             requireBrightEnvironment
-            scanningArea={[
-                0,
-                0,
-                PixelRatio.getPixelSizeForLayoutSize(windowHeight),
-                PixelRatio.getPixelSizeForLayoutSize(windowHeight),
+            faceCenter={[
+                0.5,
+                0.5
             ]}
             onFaceCaptureAnalyzedImage={({nativeEvent: analysis}) => {
                 // analysis.croppedImage
@@ -142,7 +140,7 @@ function App(){
 * [requiredStableFrames](#requiredStableFrame)
 * [requireValidAngle](#requireValidAngle)
 * [requireBrightEnvironment](#requireBrightEnvironment)
-* [scanningArea](#scanningArea)
+* [faceCenter](#faceCenter)
 * [onFaceCaptureStateChanged](#onFaceCaptureStateChanged)
 * [onFaceCaptureStateFailed](#onFaceCaptureStateFailed)
 * [onFaceCaptureAnalyzedImage](#onFaceCaptureAnalyzedImage)
@@ -179,14 +177,8 @@ This optional boolean, if true, will require the picture to be taken in a bright
 * **true (default)** - require bright environment, picture is not taken til the luminosity is good enough 
 * **false** -  allow the picture to be taken regardless of luminosity 
 
-
-#### scanningArea
-The scanning area is a Rect representing the region in which the face can only be detected. If the face is outside of this region it, will not be considered a valid face.
-The value must be an array of four values to determine the region: `[x, y, width, height]`.
-Please note the width and height will be considered as pixel values.
-You may convert your conventional height and width with [`getPixelSizeForLayoutSize()`](https://reactnative.dev/docs/pixelratio#getpixelsizeforlayoutsize).
-
-A default of `[0, 0, 720, 1280]` will be applied for this.
+#### faceCenter
+The face center is a Point representing the expected position of the center of the captured face. If the actual face center is not near this point it will not be considered a valid face. This parameter is a percentage value (x, y). E.g.: (0,0) - represents a top left point; (0.5, 0.5) - represents center of the screen; (1,1) - represents a point in the bottom right of the screen;
 
 #### onFaceCaptureStateChanged
 A function to be invoked when the state of Face Capture changes.

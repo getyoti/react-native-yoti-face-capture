@@ -61,14 +61,12 @@
     [self.faceCaptureConfiguration disableEnvironmentLuminosityValidationOption];
 }
 
--(void)setScanningArea:(NSArray *)scanningArea {
-    CGRect area = CGRectMake(
-        [(NSNumber *)[scanningArea objectAtIndex:0] floatValue],
-        [(NSNumber *)[scanningArea objectAtIndex:1] floatValue],
-        [(NSNumber *)[scanningArea objectAtIndex:2] floatValue] / [UIScreen mainScreen].scale,
-        [(NSNumber *)[scanningArea objectAtIndex:3] floatValue] / [UIScreen mainScreen].scale
+-(void)setFaceCenter:(NSArray *)faceCenter {
+    CGPoint point = CGPointMake(
+        [(NSNumber *)[faceCenter objectAtIndex:0] floatValue],
+        [(NSNumber *)[faceCenter objectAtIndex:1] floatValue]
     );
-    [self.faceCaptureConfiguration setScanningArea:area];
+    [self.faceCaptureConfiguration setFaceCenter: point];
 }
 
 -(void)setRequiredStableFrames:(NSNumber *)requiredStableFrames {

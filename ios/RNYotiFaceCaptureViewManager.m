@@ -21,7 +21,7 @@ RCT_EXPORT_VIEW_PROPERTY(requireValidAngle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(requireBrightEnvironment, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(imageQuality, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(requiredStableFrames, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(scanningArea, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(faceCenter, NSArray)
 
 - (NSDictionary *)constantsToExport
 {
