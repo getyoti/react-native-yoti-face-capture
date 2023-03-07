@@ -1,6 +1,6 @@
 {
   "name": "@getyoti/react-native-yoti-face-capture",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "An easy to use face detection component for React Native from Yoti.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

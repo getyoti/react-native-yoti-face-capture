@@ -1,4 +1,9 @@
 # ChangeLog
+## Version 3.0.1
+
+Contains a couple of bug fixes on the Android side of the SDK:
+- Fixes issue with `react-native` `< 0.63` resulting in app a crash on launch.
+
 ## Version 3.0.0
 BREAKING CHANGE: New configuration requirements
 
