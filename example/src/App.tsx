@@ -1,5 +1,4 @@
 import * as React from 'react';
-//import AutoHeightImage from 'react-native-auto-height-image';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import {
   Platform,
@@ -7,20 +6,21 @@ import {
   View,
   TouchableOpacity,
   Text,
-  useWindowDimensions,
+  Alert,
+  Image,
 } from 'react-native';
+
 import YotiFaceCapture, {
   IMAGE_QUALITY_MEDIUM,
 } from '@getyoti/react-native-yoti-face-capture';
 
 export default function App() {
-  const YotiFaceCaptureRef = React.useRef(null);
+  const YotiFaceCaptureRef = React.useRef<any>(null);
 
-  const [base64, setBase64] = React.useState(false);
+  const [base64, setBase64] = React.useState<string | false>(false);
   const [cameraIsRunning, setCameraIsRunning] = React.useState(false);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [latestState, setLatestState] = React.useState('');
-
 
   React.useEffect(() => {
     let permission;
@@ -34,12 +34,12 @@ export default function App() {
       .then((result) => {
         if (result !== RESULTS.GRANTED) {
           request(permission).catch(() =>
-            alert('Camera permission could not be obtained.')
+            Alert.alert('Camera permission could not be obtained.')
           );
         }
       })
       .catch(() => {
-        alert('Camera permission request failed.');
+        Alert.alert('Camera permission request failed.');
       });
   }, []);
 
@@ -65,7 +65,7 @@ export default function App() {
         requireValidAngle={false}
         requireBrightEnvironment
         faceCenter={[0.5, 0.5]}
-        onFaceCaptureAnalyzedImage={(result) => {
+        onFaceCaptureAnalyzedImage={(result: any) => {
           const { croppedImage } = result;
           const uri = `data:image/jpg;base64,${croppedImage}`;
           if (uri !== base64) {
@@ -73,13 +73,13 @@ export default function App() {
           }
           setLatestState('Valid Face');
         }}
-        onFaceCaptureImageAnalysisFailed={({ cause }) => {
+        onFaceCaptureImageAnalysisFailed={({ cause }: any) => {
           setLatestState(`Failed - ${cause}`);
         }}
-        onFaceCaptureStateChanged={(state) => {
+        onFaceCaptureStateChanged={(state: any) => {
           setLatestState(state);
         }}
-        onFaceCaptureStateFailed={(reason) => {
+        onFaceCaptureStateFailed={(reason: any) => {
           setLatestState(reason);
         }}
         style={styles.aperture}
@@ -87,19 +87,12 @@ export default function App() {
       />
       {base64 && (
         <View style={styles.previewContainer}>
-          {/* Replace react-native-scalable-image ??? */}
-          
-          {/*}
-          <AutoHeightImage
-            width={100}
+          <Image
             source={{
               uri: base64,
             }}
             style={styles.preview}
           />
-          */}
-          
-
         </View>
       )}
       <View style={styles.buttonContainer}>
@@ -107,17 +100,17 @@ export default function App() {
         <Button
           onPress={() => {
             if (!cameraIsRunning) {
-              YotiFaceCaptureRef.current.startCamera();
+              YotiFaceCaptureRef.current?.startCamera();
               setCameraIsRunning(true);
               return;
             }
             if (!isAnalyzing) {
-              YotiFaceCaptureRef.current.startAnalyzing();
+              YotiFaceCaptureRef.current?.startAnalyzing();
               setIsAnalyzing(true);
               return;
             }
-            YotiFaceCaptureRef.current.stopAnalyzing();
-            YotiFaceCaptureRef.current.stopCamera();
+            YotiFaceCaptureRef.current?.stopAnalyzing();
+            YotiFaceCaptureRef.current?.stopCamera();
             setIsAnalyzing(false);
             setCameraIsRunning(false);
           }}
@@ -129,7 +122,12 @@ export default function App() {
   );
 }
 
-function Button({ children, onPress }) {
+type ButtonProps = {
+  children: React.ReactNode;
+  onPress: () => void;
+};
+
+function Button({ children, onPress }: ButtonProps) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.button}>
       <Text style={styles.buttonText}>{children}</Text>
@@ -174,6 +172,7 @@ const styles = StyleSheet.create({
   },
   preview: {
     width: 100,
+    height: 100,
   },
   button: {
     backgroundColor: '#2d9fff',

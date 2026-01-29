@@ -4,8 +4,9 @@ import android.graphics.PointF;
 import android.util.Base64;
 import android.view.Choreographer;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.facebook.react.bridge.Arguments;
@@ -13,8 +14,8 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
-
-import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.facebook.react.uimanager.UIManagerHelper;
+import com.facebook.react.uimanager.events.EventDispatcher;
 import com.yoti.mobile.android.capture.face.ui.FaceCapture;
 import com.yoti.mobile.android.capture.face.ui.FaceCaptureListener;
 import com.yoti.mobile.android.capture.face.ui.models.camera.CameraState;
@@ -26,7 +27,7 @@ import com.yoti.mobile.android.capture.face.ui.models.face.ImageQuality;
 
 import org.jetbrains.annotations.NotNull;
 
-public class YotiFaceCaptureView extends LinearLayout {
+public class YotiFaceCaptureView extends FrameLayout {
   private final ThemedReactContext context;
   private final FaceCapture mFaceCapture;
   private ImageQuality mImageQuality;
@@ -35,16 +36,25 @@ public class YotiFaceCaptureView extends LinearLayout {
   private boolean mRequireBrightEnvironment = true;
   private int mRequiredStableFrames;
   private ReadableArray mFaceCenter;
+  private boolean isCleanedUp = false;
+  
+  private final Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
+    @Override
+    public void doFrame(long frameTimeNanos) {
+      if (!isCleanedUp) {
+        manuallyLayoutChildren();
+        getViewTreeObserver().dispatchOnGlobalLayout();
+        Choreographer.getInstance().postFrameCallback(this);
+      }
+    }
+  };
+  
   private final CameraStateListener mCameraStateListener = new CameraStateListener() {
     @Override
     public void onCameraState(@NotNull CameraState cameraState) {
       WritableMap event = Arguments.createMap();
       event.putString("state", cameraState.getClass().getSimpleName());
-      ReactContext reactContext = (ReactContext) getContext();
-      reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-        getId(),
-        "onCameraStateChange",
-        event);
+      sendEvent("onCameraStateChange", event);
     }
   };
   private final FaceCaptureListener mFaceCaptureListener = new FaceCaptureListener() {
@@ -84,11 +94,7 @@ public class YotiFaceCaptureView extends LinearLayout {
         event.putMap("faceBoundingBox", faceBoundingBox);
       }
 
-      ReactContext reactContext = (ReactContext) getContext();
-      reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-        getId(),
-        "onFaceCaptureResult",
-        event);
+      sendEvent("onFaceCaptureResult", event);
     }
   };
 
@@ -97,14 +103,29 @@ public class YotiFaceCaptureView extends LinearLayout {
     this.context = context;
     inflate(context, R.layout.yotifacecapture, this);
     mFaceCapture = findViewById(R.id.faceCapture);
-    Choreographer.getInstance().postFrameCallback(new Choreographer.FrameCallback() {
+    
+    // Add layout change listener to handle React Native new architecture layout
+    addOnLayoutChangeListener(new OnLayoutChangeListener() {
       @Override
-      public void doFrame(long frameTimeNanos) {
-        manuallyLayoutChildren();
-        getViewTreeObserver().dispatchOnGlobalLayout();
-        Choreographer.getInstance().postFrameCallback(this);
+      public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                  int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        int width = right - left;
+        int height = bottom - top;
+        if (width > 0 && height > 0) {
+          // Force all children to match parent size
+          for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            child.measure(
+              MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+              MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            );
+            child.layout(0, 0, width, height);
+          }
+        }
       }
     });
+    
+    Choreographer.getInstance().postFrameCallback(frameCallback);
   }
 
   void manuallyLayoutChildren() {
@@ -119,6 +140,34 @@ public class YotiFaceCaptureView extends LinearLayout {
   @Override
   public void requestLayout() {
     super.requestLayout();
+    // This is needed to ensure layout happens properly in React Native 0.7x+
+    // Without this, the view may have 0 width/height causing black screen
+    post(measureAndLayout);
+  }
+
+  private final Runnable measureAndLayout = new Runnable() {
+    @Override
+    public void run() {
+      measure(
+        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+      layout(getLeft(), getTop(), getRight(), getBottom());
+    }
+  };
+
+  /**
+   * Send events to React Native using the modern EventDispatcher API.
+   * This is compatible with both the old architecture and the new Fabric architecture.
+   */
+  private void sendEvent(String eventName, @Nullable WritableMap event) {
+    ReactContext reactContext = (ReactContext) getContext();
+    int surfaceId = UIManagerHelper.getSurfaceId(reactContext);
+    EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, getId());
+    if (eventDispatcher != null) {
+      eventDispatcher.dispatchEvent(
+        new YotiFaceCaptureEvent(surfaceId, getId(), eventName, event)
+      );
+    }
   }
 
   public void setFaceCenter(ReadableArray faceCenter) throws Exception {
@@ -181,5 +230,20 @@ public class YotiFaceCaptureView extends LinearLayout {
 
   public void stopAnalyzing() {
     mFaceCapture.stopAnalysing();
+  }
+
+  /**
+   * Clean up resources when the view is dropped.
+   * Called from ViewManager.onDropViewInstance()
+   */
+  public void cleanup() {
+    isCleanedUp = true;
+    Choreographer.getInstance().removeFrameCallback(frameCallback);
+    try {
+      mFaceCapture.stopAnalysing();
+      mFaceCapture.stopCamera();
+    } catch (Exception e) {
+      // Ignore cleanup errors
+    }
   }
 }

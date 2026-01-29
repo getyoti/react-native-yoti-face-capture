@@ -1,6 +1,7 @@
 package com.yoti.reactnative.facecapture;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
@@ -25,6 +26,8 @@ public class YotiFaceCaptureViewManager extends SimpleViewManager<YotiFaceCaptur
     return new YotiFaceCaptureView(reactContext);
   }
 
+  @Override
+  @Nullable
   public Map getExportedCustomBubblingEventTypeConstants() {
     return MapBuilder.builder()
       .put(
@@ -38,6 +41,12 @@ public class YotiFaceCaptureViewManager extends SimpleViewManager<YotiFaceCaptur
           "phasedRegistrationNames",
           MapBuilder.of("bubbled", "onFaceCaptureResult")))
       .build();
+  }
+
+  @Override
+  public void onDropViewInstance(@NonNull YotiFaceCaptureView view) {
+    view.cleanup();
+    super.onDropViewInstance(view);
   }
 
   @ReactProp(name = "faceCenter")

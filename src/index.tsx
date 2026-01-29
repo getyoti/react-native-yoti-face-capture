@@ -1,9 +1,10 @@
 // @ts-ignore
-//import RNYotiCapture from './RNYotiCapture';
+import RNYotiCapture from './RNYotiCapture';
 
-//export default RNYotiCapture;
-//////
+export {
+  IMAGE_QUALITY_LOW,
+  IMAGE_QUALITY_MEDIUM,
+  IMAGE_QUALITY_HIGH,
+} from './RNYotiCaptureTypes';
 
-import {NativeModules} from 'react-native'
-
-export default NativeModules.RNYotiCapture;
+export default RNYotiCapture;
