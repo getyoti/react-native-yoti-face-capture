@@ -18,14 +18,11 @@ import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.events.EventDispatcher;
 import com.yoti.mobile.android.capture.face.ui.FaceCapture;
 import com.yoti.mobile.android.capture.face.ui.FaceCaptureListener;
-import com.yoti.mobile.android.capture.face.ui.models.camera.CameraState;
 import com.yoti.mobile.android.capture.face.ui.models.camera.CameraStateListener;
 import com.yoti.mobile.android.capture.face.ui.models.face.FaceCaptureConfiguration;
-import com.yoti.mobile.android.capture.face.ui.models.face.FaceCaptureResult;
 import com.yoti.mobile.android.capture.face.ui.models.face.FaceCaptureState;
 import com.yoti.mobile.android.capture.face.ui.models.face.ImageQuality;
-
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 public class YotiFaceCaptureView extends FrameLayout {
   private final ThemedReactContext context;
@@ -49,53 +46,48 @@ public class YotiFaceCaptureView extends FrameLayout {
     }
   };
   
-  private final CameraStateListener mCameraStateListener = new CameraStateListener() {
-    @Override
-    public void onCameraState(@NotNull CameraState cameraState) {
-      WritableMap event = Arguments.createMap();
-      event.putString("state", cameraState.getClass().getSimpleName());
-      sendEvent("onCameraStateChange", event);
-    }
+  private final CameraStateListener mCameraStateListener = cameraState -> {
+    WritableMap event = Arguments.createMap();
+    event.putString("state", cameraState.getClass().getSimpleName());
+    sendEvent("onCameraStateChange", event);
   };
-  private final FaceCaptureListener mFaceCaptureListener = new FaceCaptureListener() {
-    @Override
-    public void onFaceCaptureResult(@NotNull FaceCaptureResult faceCaptureResult) {
-      WritableMap event = Arguments.createMap();
-      event.putString("originalImage", Base64.encodeToString(faceCaptureResult.getOriginalImage().getData(), Base64.DEFAULT));
-      event.putString("state", faceCaptureResult.getState().getClass().getSimpleName());
+  private final FaceCaptureListener mFaceCaptureListener = faceCaptureResult -> {
+    WritableMap event = Arguments.createMap();
+    assert faceCaptureResult.getOriginalImage() != null;
+    event.putString("originalImage", Base64.encodeToString(faceCaptureResult.getOriginalImage().getData(), Base64.DEFAULT));
+    event.putString("state", faceCaptureResult.getState().getClass().getSimpleName());
 
-      FaceCaptureState s = faceCaptureResult.getState();
-      if (s instanceof FaceCaptureState.InvalidFace) {
-        event.putString("cause", ((FaceCaptureState.InvalidFace) s).getCause().getClass().getSimpleName());
-      }
-      if (s instanceof FaceCaptureState.ValidFace) {
-        int croppedFaceBoundingBoxLeft = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().left;
-        int croppedFaceBoundingBoxTop = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().top;
-        int croppedFaceBoundingBoxRight = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().right;
-        int croppedFaceBoundingBoxBottom = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().bottom;
-        WritableMap croppedFaceBoundingBox = Arguments.createMap();
-        croppedFaceBoundingBox.putInt("x", croppedFaceBoundingBoxLeft);
-        croppedFaceBoundingBox.putInt("y", croppedFaceBoundingBoxTop);
-        croppedFaceBoundingBox.putInt("width", croppedFaceBoundingBoxRight - croppedFaceBoundingBoxLeft);
-        croppedFaceBoundingBox.putInt("height", croppedFaceBoundingBoxBottom - croppedFaceBoundingBoxTop);
-
-        int faceBoundingBoxLeft = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().left;
-        int faceBoundingBoxTop = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().top;
-        int faceBoundingBoxRight = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().right;
-        int faceBoundingBoxBottom = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().bottom;
-        WritableMap faceBoundingBox = Arguments.createMap();
-        faceBoundingBox.putInt("x", faceBoundingBoxLeft);
-        faceBoundingBox.putInt("y", faceBoundingBoxTop);
-        faceBoundingBox.putInt("width", faceBoundingBoxRight - faceBoundingBoxLeft);
-        faceBoundingBox.putInt("height", faceBoundingBoxBottom - faceBoundingBoxTop);
-
-        event.putString("croppedImage", Base64.encodeToString(((FaceCaptureState.ValidFace) s).getCroppedImage(), Base64.DEFAULT));
-        event.putMap("croppedFaceBoundingBox", croppedFaceBoundingBox);
-        event.putMap("faceBoundingBox", faceBoundingBox);
-      }
-
-      sendEvent("onFaceCaptureResult", event);
+    FaceCaptureState s = faceCaptureResult.getState();
+    if (s instanceof FaceCaptureState.InvalidFace) {
+      event.putString("cause", ((FaceCaptureState.InvalidFace) s).getCause().getClass().getSimpleName());
     }
+    if (s instanceof FaceCaptureState.ValidFace) {
+      int croppedFaceBoundingBoxLeft = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().left;
+      int croppedFaceBoundingBoxTop = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().top;
+      int croppedFaceBoundingBoxRight = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().right;
+      int croppedFaceBoundingBoxBottom = ((FaceCaptureState.ValidFace) s).getCroppedFaceBoundingBox().bottom;
+      WritableMap croppedFaceBoundingBox = Arguments.createMap();
+      croppedFaceBoundingBox.putInt("x", croppedFaceBoundingBoxLeft);
+      croppedFaceBoundingBox.putInt("y", croppedFaceBoundingBoxTop);
+      croppedFaceBoundingBox.putInt("width", croppedFaceBoundingBoxRight - croppedFaceBoundingBoxLeft);
+      croppedFaceBoundingBox.putInt("height", croppedFaceBoundingBoxBottom - croppedFaceBoundingBoxTop);
+
+      int faceBoundingBoxLeft = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().left;
+      int faceBoundingBoxTop = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().top;
+      int faceBoundingBoxRight = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().right;
+      int faceBoundingBoxBottom = ((FaceCaptureState.ValidFace) s).getFaceBoundingBox().bottom;
+      WritableMap faceBoundingBox = Arguments.createMap();
+      faceBoundingBox.putInt("x", faceBoundingBoxLeft);
+      faceBoundingBox.putInt("y", faceBoundingBoxTop);
+      faceBoundingBox.putInt("width", faceBoundingBoxRight - faceBoundingBoxLeft);
+      faceBoundingBox.putInt("height", faceBoundingBoxBottom - faceBoundingBoxTop);
+
+      event.putString("croppedImage", Base64.encodeToString(((FaceCaptureState.ValidFace) s).getCroppedImage(), Base64.DEFAULT));
+      event.putMap("croppedFaceBoundingBox", croppedFaceBoundingBox);
+      event.putMap("faceBoundingBox", faceBoundingBox);
+    }
+
+    sendEvent("onFaceCaptureResult", event);
   };
 
   YotiFaceCaptureView(ThemedReactContext context) {
@@ -105,22 +97,18 @@ public class YotiFaceCaptureView extends FrameLayout {
     mFaceCapture = findViewById(R.id.faceCapture);
     
     // Add layout change listener to handle React Native new architecture layout
-    addOnLayoutChangeListener(new OnLayoutChangeListener() {
-      @Override
-      public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                  int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        int width = right - left;
-        int height = bottom - top;
-        if (width > 0 && height > 0) {
-          // Force all children to match parent size
-          for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            child.measure(
-              MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-              MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-            );
-            child.layout(0, 0, width, height);
-          }
+    addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+      int width = right - left;
+      int height = bottom - top;
+      if (width > 0 && height > 0) {
+        // Force all children to match parent size
+        for (int i = 0; i < getChildCount(); i++) {
+          View child = getChildAt(i);
+          child.measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+          );
+          child.layout(0, 0, width, height);
         }
       }
     });
@@ -145,14 +133,11 @@ public class YotiFaceCaptureView extends FrameLayout {
     post(measureAndLayout);
   }
 
-  private final Runnable measureAndLayout = new Runnable() {
-    @Override
-    public void run() {
-      measure(
-        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-      layout(getLeft(), getTop(), getRight(), getBottom());
-    }
+  private final Runnable measureAndLayout = () -> {
+    measure(
+      MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+    layout(getLeft(), getTop(), getRight(), getBottom());
   };
 
   /**
@@ -170,11 +155,11 @@ public class YotiFaceCaptureView extends FrameLayout {
     }
   }
 
-  public void setFaceCenter(ReadableArray faceCenter) throws Exception {
+  public void setFaceCenter(ReadableArray faceCenter) {
     mFaceCenter = faceCenter;
   }
 
-  public void setImageQuality(String imageQuality) throws Exception {
+  public void setImageQuality(String imageQuality) {
     if (imageQuality.equals(ImageQuality.LOW.toString())) {
       mImageQuality = ImageQuality.LOW;
       return;
@@ -207,7 +192,7 @@ public class YotiFaceCaptureView extends FrameLayout {
   }
 
   public void startCamera() {
-    mFaceCapture.startCamera((LifecycleOwner) this.context.getCurrentActivity(), mCameraStateListener);
+    mFaceCapture.startCamera((LifecycleOwner) Objects.requireNonNull(this.context.getCurrentActivity()), mCameraStateListener);
   }
 
   public void stopCamera() {
@@ -217,13 +202,21 @@ public class YotiFaceCaptureView extends FrameLayout {
   public void startAnalyzing() {
     PointF faceCenter = new PointF((float) mFaceCenter.getDouble(0), (float) mFaceCenter.getDouble(1));
 
+    // Configuration flags not available for FCM variant
+    final boolean isSelfCheckoutMode = false;
+    final boolean provideLandmarks = false;
+    final boolean provideSmileScore = false;
+
     FaceCaptureConfiguration configuration = new FaceCaptureConfiguration(
-      faceCenter,
-      mImageQuality,
-      mRequireValidAngle,
-      mRequireEyesOpen,
-      mRequireBrightEnvironment,
-      mRequiredStableFrames
+            faceCenter,
+            mImageQuality,
+            mRequireValidAngle,
+            mRequireEyesOpen,
+            mRequireBrightEnvironment,
+            mRequiredStableFrames,
+            provideLandmarks,
+            provideSmileScore,
+            isSelfCheckoutMode
     );
     mFaceCapture.startAnalysing(configuration, mFaceCaptureListener);
   }

@@ -2,6 +2,7 @@ package com.yoti.reactnative.facecapture;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -19,6 +20,7 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     super(context);
   }
 
+  @NonNull
   @Override
   public String getName() {
     return "YotiFaceCaptureModule";
@@ -53,68 +55,56 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void startCamera(final int viewTag) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-          if (faceCaptureView != null) {
-            faceCaptureView.startCamera();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+    UiThreadUtil.runOnUiThread(() -> {
+      try {
+        YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
+        if (faceCaptureView != null) {
+          faceCaptureView.startCamera();
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }
 
   @ReactMethod
   public void stopCamera(final int viewTag) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-          if (faceCaptureView != null) {
-            faceCaptureView.stopCamera();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+    UiThreadUtil.runOnUiThread(() -> {
+      try {
+        YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
+        if (faceCaptureView != null) {
+          faceCaptureView.stopCamera();
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }
 
   @ReactMethod
   public void startAnalyzing(final int viewTag) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-          if (faceCaptureView != null) {
-            faceCaptureView.startAnalyzing();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+    UiThreadUtil.runOnUiThread(() -> {
+      try {
+        YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
+        if (faceCaptureView != null) {
+          faceCaptureView.startAnalyzing();
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }
 
   @ReactMethod
   public void stopAnalyzing(final int viewTag) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-          if (faceCaptureView != null) {
-            faceCaptureView.stopAnalyzing();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
+    UiThreadUtil.runOnUiThread(() -> {
+      try {
+        YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
+        if (faceCaptureView != null) {
+          faceCaptureView.stopAnalyzing();
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }

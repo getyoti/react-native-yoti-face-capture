@@ -1,5 +1,6 @@
 package com.yoti.reactnative.facecapture;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.WritableMap;
@@ -19,6 +20,7 @@ public class YotiFaceCaptureEvent extends Event<YotiFaceCaptureEvent> {
     this.eventData = eventData;
   }
 
+  @NonNull
   @Override
   public String getEventName() {
     return eventName;

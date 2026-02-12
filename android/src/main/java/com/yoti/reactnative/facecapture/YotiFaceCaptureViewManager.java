@@ -22,7 +22,7 @@ public class YotiFaceCaptureViewManager extends SimpleViewManager<YotiFaceCaptur
 
   @Override
   @NonNull
-  public YotiFaceCaptureView createViewInstance(ThemedReactContext reactContext) {
+  public YotiFaceCaptureView createViewInstance(@NonNull ThemedReactContext reactContext) {
     return new YotiFaceCaptureView(reactContext);
   }
 
