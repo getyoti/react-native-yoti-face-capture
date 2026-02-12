@@ -10,9 +10,15 @@ import {
   Image,
 } from 'react-native';
 
+import { 
+   SafeAreaProvider,
+   SafeAreaView 
+} from 'react-native-safe-area-context';
+
 import YotiFaceCapture, {
   IMAGE_QUALITY_MEDIUM,
 } from '@getyoti/react-native-yoti-face-capture';
+
 
 export default function App() {
   const YotiFaceCaptureRef = React.useRef<any>(null);
@@ -57,68 +63,70 @@ export default function App() {
   }
 
   return (
-    <>
-      <YotiFaceCapture
-        imageQuality={IMAGE_QUALITY_MEDIUM}
-        requireEyesOpen={false}
-        requiredStableFrames={1}
-        requireValidAngle={false}
-        requireBrightEnvironment
-        faceCenter={[0.5, 0.5]}
-        onFaceCaptureAnalyzedImage={(result: any) => {
-          const { croppedImage } = result;
-          const uri = `data:image/jpg;base64,${croppedImage}`;
-          if (uri !== base64) {
-            setBase64(uri);
-          }
-          setLatestState('Valid Face');
-        }}
-        onFaceCaptureImageAnalysisFailed={({ cause }: any) => {
-          setLatestState(`Failed - ${cause}`);
-        }}
-        onFaceCaptureStateChanged={(state: any) => {
-          setLatestState(state);
-        }}
-        onFaceCaptureStateFailed={(reason: any) => {
-          setLatestState(reason);
-        }}
-        style={styles.aperture}
-        ref={YotiFaceCaptureRef}
-      />
-      {base64 && (
-        <View style={styles.previewContainer}>
-          <Image
-            source={{
-              uri: base64,
-            }}
-            style={styles.preview}
-          />
-        </View>
-      )}
-      <View style={styles.buttonContainer}>
-        <Text style={styles.log}>{latestState}</Text>
-        <Button
-          onPress={() => {
-            if (!cameraIsRunning) {
-              YotiFaceCaptureRef.current?.startCamera();
-              setCameraIsRunning(true);
-              return;
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <YotiFaceCapture
+          imageQuality={IMAGE_QUALITY_MEDIUM}
+          requireEyesOpen={false}
+          requiredStableFrames={1}
+          requireValidAngle={false}
+          requireBrightEnvironment
+          faceCenter={[0.5, 0.5]}
+          onFaceCaptureAnalyzedImage={(result: any) => {
+            const { croppedImage } = result;
+            const uri = `data:image/jpg;base64,${croppedImage}`;
+            if (uri !== base64) {
+              setBase64(uri);
             }
-            if (!isAnalyzing) {
-              YotiFaceCaptureRef.current?.startAnalyzing();
-              setIsAnalyzing(true);
-              return;
-            }
-            YotiFaceCaptureRef.current?.stopAnalyzing();
-            YotiFaceCaptureRef.current?.stopCamera();
-            setIsAnalyzing(false);
-            setCameraIsRunning(false);
+            setLatestState('Valid Face');
           }}
-        >
-          {buttonLabel()}
-        </Button>
-      </View>
-    </>
+          onFaceCaptureImageAnalysisFailed={({ cause }: any) => {
+            setLatestState(`Failed - ${cause}`);
+          }}
+          onFaceCaptureStateChanged={(state: any) => {
+            setLatestState(state);
+          }}
+          onFaceCaptureStateFailed={(reason: any) => {
+            setLatestState(reason);
+          }}
+          style={styles.aperture}
+          ref={YotiFaceCaptureRef}
+        />
+        {base64 && (
+          <SafeAreaView style={styles.previewContainer}>
+            <Image
+              source={{
+                uri: base64,
+              }}
+              style={styles.preview}
+            />
+          </SafeAreaView>
+        )}
+        <SafeAreaView style={styles.buttonContainer}>
+          <Text style={styles.log}>{latestState}</Text>
+          <Button
+            onPress={() => {
+              if (!cameraIsRunning) {
+                YotiFaceCaptureRef.current?.startCamera();
+                setCameraIsRunning(true);
+                return;
+              }
+              if (!isAnalyzing) {
+                YotiFaceCaptureRef.current?.startAnalyzing();
+                setIsAnalyzing(true);
+                return;
+              }
+              YotiFaceCaptureRef.current?.stopAnalyzing();
+              YotiFaceCaptureRef.current?.stopCamera();
+              setIsAnalyzing(false);
+              setCameraIsRunning(false);
+            }}
+          >
+            {buttonLabel()}
+          </Button>
+        </SafeAreaView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
