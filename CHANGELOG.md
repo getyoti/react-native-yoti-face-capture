@@ -1,4 +1,9 @@
 # ChangeLog
+## Version 4.0.0
+- Upgrade React Native version to 0.73.1 and adapt project to the new architecture.
+- Upgrade example app/tooling
+- Upgrade Android Face Capture SDK to 4.8.1: edge-to-edge compatibility + 16Kb page-size support
+
 ## Version 3.0.1
 
 Contains a couple of bug fixes on the Android side of the SDK:
