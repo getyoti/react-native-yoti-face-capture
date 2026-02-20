@@ -3,7 +3,6 @@ import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import {
   Platform,
   StyleSheet,
-  View,
   TouchableOpacity,
   Text,
   Alert,
@@ -56,10 +55,8 @@ export default function App() {
     if (!isAnalyzing) {
       return 'Start Analyzing';
     }
-    if (isAnalyzing) {
-      return 'Stop Analyzing + Camera';
-    }
-    return 'Stop Camera';
+   
+    return 'Stop Analyzing + Camera';
   }
 
   return (

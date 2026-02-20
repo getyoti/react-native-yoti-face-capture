@@ -3,6 +3,7 @@ package com.yoti.reactnative.facecapture;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -35,6 +36,7 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     return constants;
   }
 
+  @Nullable
   private YotiFaceCaptureView resolveView(int viewTag) {
     final ReactApplicationContext context = getReactApplicationContext();
     UIManager uiManager = UIManagerHelper.getUIManager(context, UIManagerType.FABRIC);
@@ -58,9 +60,8 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     UiThreadUtil.runOnUiThread(() -> {
       try {
         YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-        if (faceCaptureView != null) {
-          faceCaptureView.startCamera();
-        }
+        
+        faceCaptureView.startCamera();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -72,9 +73,8 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     UiThreadUtil.runOnUiThread(() -> {
       try {
         YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-        if (faceCaptureView != null) {
-          faceCaptureView.stopCamera();
-        }
+
+        faceCaptureView.stopCamera();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -86,9 +86,8 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     UiThreadUtil.runOnUiThread(() -> {
       try {
         YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-        if (faceCaptureView != null) {
-          faceCaptureView.startAnalyzing();
-        }
+        
+        faceCaptureView.startAnalyzing();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -100,9 +99,8 @@ public class YotiFaceCaptureModule extends ReactContextBaseJavaModule {
     UiThreadUtil.runOnUiThread(() -> {
       try {
         YotiFaceCaptureView faceCaptureView = resolveView(viewTag);
-        if (faceCaptureView != null) {
-          faceCaptureView.stopAnalyzing();
-        }
+        
+        faceCaptureView.stopAnalyzing();
       } catch (Exception e) {
         e.printStackTrace();
       }
