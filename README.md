@@ -52,14 +52,14 @@ You may then run:
 
 The library employs the [bundled version approach](https://github.com/getyoti/yoti-face-capture-android#bundled-vs-unbundled) approach for the AI models. 
 ### iOS Configuration
-- Requres iOS 12.0+
+- Requres iOS 15.1+
 - Requres Swift 5.3+
 
 Make sure you've installed and are running the latest version of [Cocoapods](https://guides.cocoapods.org/using/getting-started.html).
 Add the `use_frameworks!` declaration to your Podfile and run `pod install` from the ios directory:
 
 ```bash
-platform :ios, '12.0'
+platform :ios, '15.1'
 
 target 'TargetName' do
   use_frameworks!

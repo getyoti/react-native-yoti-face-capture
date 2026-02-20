@@ -1,12 +1,17 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
 
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
-platform :ios, '13.0'
+platform :ios, '15.1'
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -24,10 +29,10 @@ target 'YotiFaceCaptureExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  permissions_path = '../node_modules/react-native-permissions/ios'
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
-  # pod 'react-native-yoti-face-capture', :path => '../..'
-
+  setup_permissions([
+   'Camera'
+  ])
+  
   # Convert all permission pods into static libraries
   pre_install do |installer|
     Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
