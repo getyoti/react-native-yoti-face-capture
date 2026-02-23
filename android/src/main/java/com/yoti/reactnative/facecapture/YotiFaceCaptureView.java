@@ -53,7 +53,6 @@ public class YotiFaceCaptureView extends FrameLayout {
   };
   private final FaceCaptureListener mFaceCaptureListener = faceCaptureResult -> {
     WritableMap event = Arguments.createMap();
-    assert faceCaptureResult.getOriginalImage() != null;
     event.putString("originalImage", Base64.encodeToString(faceCaptureResult.getOriginalImage().getData(), Base64.DEFAULT));
     event.putString("state", faceCaptureResult.getState().getClass().getSimpleName());
 
