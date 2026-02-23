@@ -192,7 +192,7 @@ public class YotiFaceCaptureView extends FrameLayout {
   }
 
   public void startCamera() {
-    mFaceCapture.startCamera((LifecycleOwner) Objects.requireNonNull(this.context.getCurrentActivity()), mCameraStateListener);
+    mFaceCapture.startCamera((LifecycleOwner) this.context.getCurrentActivity(), mCameraStateListener);
   }
 
   public void stopCamera() {
