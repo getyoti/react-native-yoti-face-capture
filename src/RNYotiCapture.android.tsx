@@ -1,4 +1,9 @@
-import React from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import {
   findNodeHandle,
   requireNativeComponent,
@@ -103,136 +108,144 @@ const FACE_CAPTURE_FAILURE_RENAMING: FailureRenaming = {
   MultipleFacesDetected: 'FaceCaptureAnalysisErrorMultipleFaces',
 };
 
-export default class RNYotiCapture extends React.Component<ComponentProps> {
-  _faceCaptureHandle: number | null;
+export type RNYotiCaptureRef = {
+  startAnalyzing: () => void;
+  stopAnalyzing: () => void;
+  startCamera: () => void;
+  stopCamera: () => void;
+};
 
-  constructor(props: ComponentProps) {
-    super(props);
-    this._faceCaptureHandle = null;
-  }
-
-  _setReference = (ref: any) => {
-    if (ref) {
-      this._faceCaptureHandle = findNodeHandle(ref);
-    } else {
-      this._faceCaptureHandle = null;
-    }
-  };
-
-  startAnalyzing() {
-    YotiFaceCaptureModule.startAnalyzing(this._faceCaptureHandle);
-  }
-
-  stopAnalyzing() {
-    YotiFaceCaptureModule.stopAnalyzing(this._faceCaptureHandle);
-  }
-
-  startCamera() {
-    YotiFaceCaptureModule.startCamera(this._faceCaptureHandle);
-  }
-
-  stopCamera() {
-    YotiFaceCaptureModule.stopCamera(this._faceCaptureHandle);
-  }
-
-  onCameraStateChange(
-    cameraState: NativeFaceCaptureState | NativeFaceCaptureStateFailure
-  ) {
-    let state = cameraState.nativeEvent.state;
-
-    switch (state) {
-      case 'Analyzing':
-        this.props.onFaceCaptureStateChanged('FaceCaptureStateAnalyzing');
-        break;
-
-      case 'CameraReady':
-        this.props.onFaceCaptureStateChanged('FaceCaptureStateCameraReady');
-        break;
-
-      case 'CameraStopped':
-        this.props.onFaceCaptureStateChanged('FaceCaptureStateCameraStopped');
-        break;
-
-      case 'CameraInitializationError':
-        this.props.onFaceCaptureStateFailed(
-          'FaceCaptureStateErrorCameraInitializingError'
-        );
-        break;
-
-      case 'MissingPermissions':
-        this.props.onFaceCaptureStateFailed(
-          'FaceCaptureStateErrorCameraNotAccessible'
-        );
-        break;
-    }
-  }
-
-  onFaceCaptureResult(faceCaptureResult: NativeCaptureResult) {
-    const {
-      cause: nativeCause,
-      croppedImage,
-      croppedFaceBoundingBox,
-      faceBoundingBox,
-      originalImage,
-      state,
-    } = faceCaptureResult.nativeEvent;
-
-    if (
-      state === 'ValidFace' &&
-      croppedImage != null &&
-      croppedFaceBoundingBox != null &&
-      faceBoundingBox != null &&
-      originalImage != null
-    ) {
-      this.props.onFaceCaptureAnalyzedImage({
-        croppedImage,
-        croppedFaceBoundingBox,
-        faceBoundingBox,
-        originalImage,
-      });
-      return;
-    }
-    if (nativeCause === undefined || originalImage === undefined) {
-      return;
-    }
-
-    let cause = FACE_CAPTURE_FAILURE_RENAMING[nativeCause];
-    if (cause === undefined) {
-      cause = 'FaceCaptureAnalysisErrorFaceAnalysisFailed';
-    }
-
-    this.props.onFaceCaptureImageAnalysisFailed({
-      cause,
-      originalImage,
-    });
-  }
-
-  render() {
+const RNYotiCapture = forwardRef<RNYotiCaptureRef, ComponentProps>(
+  (props, ref) => {
     const {
       requireEyesOpen = false,
       requireBrightEnvironment = true,
       requireValidAngle = false,
       requiredStableFrames = 3,
       imageQuality = IMAGE_QUALITY_MEDIUM,
-      faceCenter = [
-        0.5,
-        0.5
-      ],
-    } = this.props;
+      faceCenter = [0.5, 0.5],
+      onFaceCaptureStateChanged,
+      onFaceCaptureStateFailed,
+      onFaceCaptureAnalyzedImage,
+      onFaceCaptureImageAnalysisFailed,
+    } = props;
+
+    const faceCaptureHandleRef = useRef<number | null>(null);
+
+    const setReference = useCallback((nativeRef: any) => {
+      if (nativeRef) {
+        faceCaptureHandleRef.current = findNodeHandle(nativeRef);
+      } else {
+        faceCaptureHandleRef.current = null;
+      }
+    }, []);
+
+    useImperativeHandle(ref, () => ({
+      startAnalyzing: () => {
+        YotiFaceCaptureModule.startAnalyzing(faceCaptureHandleRef.current);
+      },
+      stopAnalyzing: () => {
+        YotiFaceCaptureModule.stopAnalyzing(faceCaptureHandleRef.current);
+      },
+      startCamera: () => {
+        YotiFaceCaptureModule.startCamera(faceCaptureHandleRef.current);
+      },
+      stopCamera: () => {
+        YotiFaceCaptureModule.stopCamera(faceCaptureHandleRef.current);
+      },
+    }));
+
+    const handleCameraStateChange = useCallback(
+      (cameraState: NativeFaceCaptureState | NativeFaceCaptureStateFailure) => {
+        const state = cameraState.nativeEvent.state;
+
+        switch (state) {
+          case 'Analyzing':
+            onFaceCaptureStateChanged('FaceCaptureStateAnalyzing');
+            break;
+
+          case 'CameraReady':
+            onFaceCaptureStateChanged('FaceCaptureStateCameraReady');
+            break;
+
+          case 'CameraStopped':
+            onFaceCaptureStateChanged('FaceCaptureStateCameraStopped');
+            break;
+
+          case 'CameraInitializationError':
+            onFaceCaptureStateFailed(
+              'FaceCaptureStateErrorCameraInitializingError'
+            );
+            break;
+
+          case 'MissingPermissions':
+            onFaceCaptureStateFailed(
+              'FaceCaptureStateErrorCameraNotAccessible'
+            );
+            break;
+        }
+      },
+      [onFaceCaptureStateChanged, onFaceCaptureStateFailed]
+    );
+
+    const handleFaceCaptureResult = useCallback(
+      (faceCaptureResult: NativeCaptureResult) => {
+        const {
+          cause: nativeCause,
+          croppedImage,
+          croppedFaceBoundingBox,
+          faceBoundingBox,
+          originalImage,
+          state,
+        } = faceCaptureResult.nativeEvent;
+
+        if (
+          state === 'ValidFace' &&
+          croppedImage != null &&
+          croppedFaceBoundingBox != null &&
+          faceBoundingBox != null &&
+          originalImage != null
+        ) {
+          onFaceCaptureAnalyzedImage({
+            croppedImage,
+            croppedFaceBoundingBox,
+            faceBoundingBox,
+            originalImage,
+          });
+          return;
+        }
+        if (nativeCause === undefined || originalImage === undefined) {
+          return;
+        }
+
+        let cause = FACE_CAPTURE_FAILURE_RENAMING[nativeCause];
+        if (cause === undefined) {
+          cause = 'FaceCaptureAnalysisErrorFaceAnalysisFailed';
+        }
+
+        onFaceCaptureImageAnalysisFailed({
+          cause,
+          originalImage,
+        });
+      },
+      [onFaceCaptureAnalyzedImage, onFaceCaptureImageAnalysisFailed]
+    );
 
     return (
       <YotiFaceCaptureView
-        {...this.props}
+        {...props}
         requireEyesOpen={requireEyesOpen}
         requireValidAngle={requireValidAngle}
         requiredStableFrames={requiredStableFrames}
         requireBrightEnvironment={requireBrightEnvironment}
         imageQuality={imageQuality}
         faceCenter={faceCenter}
-        ref={this._setReference}
-        onCameraStateChange={this.onCameraStateChange.bind(this)}
-        onFaceCaptureResult={this.onFaceCaptureResult.bind(this)}
+        ref={setReference}
+        onCameraStateChange={handleCameraStateChange}
+        onFaceCaptureResult={handleFaceCaptureResult}
       />
     );
   }
-}
+);
+
+export default RNYotiCapture;
