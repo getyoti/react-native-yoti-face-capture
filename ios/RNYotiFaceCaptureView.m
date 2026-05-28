@@ -55,7 +55,7 @@
 
 -(void)setRequireBrightEnvironment:(BOOL *)requireBrightEnvironment {
     if (requireBrightEnvironment) {
-        [self.faceCaptureConfiguration enableEnvironmentLuminosityValidationOption];
+        [self.faceCaptureConfiguration setEnvironmentLuminosityValidationWithThreshold:EnvironmentLuminosityThresholdFlexible];
         return;
     }
     [self.faceCaptureConfiguration disableEnvironmentLuminosityValidationOption];
@@ -119,65 +119,30 @@
     });
 }
 
-- (void)faceCaptureDidAnalyzeImage:(UIImage * _Nullable)originalImage withError:(enum FaceCaptureAnalysisError)error {
-    NSData * originalImageBase64 = [UIImagePNGRepresentation(originalImage) base64EncodedDataWithOptions:NSDataBase64Encoding64CharacterLineLength];
-
+static NSString *causeFromAnalysisError(FaceCaptureAnalysisError error) {
     switch (error) {
-        case FaceCaptureAnalysisErrorFaceTooBig:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceTooBig" });
-            break;
-        case FaceCaptureAnalysisErrorEyesNotOpen:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorEyesNotOpen" });
-            break;
-        case FaceCaptureAnalysisErrorFaceTooSmall:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceTooSmall" });
-            break;
-        case FaceCaptureAnalysisErrorFaceNotStable:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceNotStable" });
-            break;
-        case FaceCaptureAnalysisErrorNoFaceDetected:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorNoFaceDetected" });
-            break;
-        case FaceCaptureAnalysisErrorFaceNotCentered:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceNotCentered" });
-            break;
-        case FaceCaptureAnalysisErrorFaceNotStraight:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceNotStraight" });
-            break;
-        case FaceCaptureAnalysisErrorFaceAnalysisFailed:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorFaceAnalysisFailed" });
-            break;
-        case FaceCaptureAnalysisErrorMultipleFaces:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorMultipleFaces" });
-            break;
-        case FaceCaptureAnalysisErrorEnvironmentTooDark:
-             self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"FaceCaptureAnalysisErrorEnvironmentTooDark" });
-            break;  
-        default:
-            self.onFaceCaptureImageAnalysisFailed(@{
-                @"originalImage": originalImageBase64,
-                @"cause": @"Unknown Face Capture Analysis Error" });
-            break;
+        case FaceCaptureAnalysisErrorFaceTooBig:           return @"FaceCaptureAnalysisErrorFaceTooBig";
+        case FaceCaptureAnalysisErrorEyesNotOpen:          return @"FaceCaptureAnalysisErrorEyesNotOpen";
+        case FaceCaptureAnalysisErrorFaceTooSmall:         return @"FaceCaptureAnalysisErrorFaceTooSmall";
+        case FaceCaptureAnalysisErrorFaceNotStable:        return @"FaceCaptureAnalysisErrorFaceNotStable";
+        case FaceCaptureAnalysisErrorNoFaceDetected:       return @"FaceCaptureAnalysisErrorNoFaceDetected";
+        case FaceCaptureAnalysisErrorFaceNotCentered:      return @"FaceCaptureAnalysisErrorFaceNotCentered";
+        case FaceCaptureAnalysisErrorFaceNotStraight:      return @"FaceCaptureAnalysisErrorFaceNotStraight";
+        case FaceCaptureAnalysisErrorFaceAnalysisFailed:   return @"FaceCaptureAnalysisErrorFaceAnalysisFailed";
+        case FaceCaptureAnalysisErrorMultipleFaces:        return @"FaceCaptureAnalysisErrorMultipleFaces";
+        case FaceCaptureAnalysisErrorEnvironmentTooDark:   return @"FaceCaptureAnalysisErrorEnvironmentTooDark";
+        default:                                           return @"Unknown Face Capture Analysis Error";
+    }
+}
+
+- (void)faceCaptureDidAnalyzeImage:(UIImage * _Nullable)originalImage withError:(enum FaceCaptureAnalysisError)error {
+    @autoreleasepool {
+        NSData *originalImageBase64 = [UIImagePNGRepresentation(originalImage) base64EncodedDataWithOptions:NSDataBase64Encoding64CharacterLineLength];
+
+        self.onFaceCaptureImageAnalysisFailed(@{
+            @"originalImage": originalImageBase64,
+            @"cause": causeFromAnalysisError(error),
+        });
     }
 }
 
@@ -199,15 +164,15 @@
     }
 }
 
-- (void)faceCaptureStateFailedWithError:(enum FaceCaptureStateError)error {
-    switch (error) {
-        case FaceCaptureStateErrorCameraInitializingError:
+- (void)faceCaptureStateFailedWithError:(FaceCaptureStateError *)error {
+    switch (error.code) {
+        case FaceCaptureStateErrorCodeCameraInitializingError:
             self.onFaceCaptureStateFailed(@{ @"state": @"FaceCaptureStateErrorCameraInitializingError" });
             break;
-        case FaceCaptureStateErrorInvalidState:
+        case FaceCaptureStateErrorCodeInvalidState:
             self.onFaceCaptureStateFailed(@{ @"state": @"FaceCaptureStateErrorInvalidState" });
             break;
-        case FaceCaptureStateErrorCameraNotAccessible:
+        case FaceCaptureStateErrorCodeCameraNotAccessible:
             self.onFaceCaptureStateFailed(@{ @"state": @"FaceCaptureStateErrorCameraNotAccessible:" });
             break;
 

@@ -1,4 +1,8 @@
 # ChangeLog
+## Version 4.0.1
+- Fix unbounded memory growth and eventual crash on iOS when analysis runs for an extended period without a successful capture (no face detected, or a face that repeatedly fails validation).
+- Upgrade iOS Face Capture SDK to 9.1.0.
+
 ## Version 4.0.0
 - Upgrade React Native version to 0.80.3 and adapt project to the new architecture.
 - Upgrade example app/tooling

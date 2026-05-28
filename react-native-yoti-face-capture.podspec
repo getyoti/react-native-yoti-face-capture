@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm}"
 
   s.dependency "React-Core"
-  s.dependency "YotiFaceCapture", "5.0.0"
+  s.dependency "YotiFaceCapture", "9.1.0"
 end
